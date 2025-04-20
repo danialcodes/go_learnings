@@ -15,22 +15,24 @@ import (
 
 func Run() {
 	// Load configuration
-	cfg := config.Load()
+	configs := config.Load()
 
 	// Initialize database
-	dbPool, err := db.Initialize(cfg)
+	dbPool, err := db.Initialize(configs)
+
 	if err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
+
 	defer dbPool.Close()
 
-	// Initialize HTTP server
+	// API server setup
 	router := api.SetupRouter(dbPool)
-	server := api.NewServer(router, cfg.ServerPort)
+	server := api.NewServer(router, configs.ServerPort)
 
 	// Start the server in a goroutine
 	go func() {
-		log.Printf("Server starting on port %s", cfg.ServerPort)
+		log.Printf("Server starting on port %s", configs.ServerPort)
 		if err := server.ListenAndServe(); err != nil {
 			log.Fatalf("Server failed to start: %v", err)
 		}
