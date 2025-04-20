@@ -1,139 +1,215 @@
-# Basic Learning and hello world projects
+# CRUD API
+## CRUD API with GO and POSTGRESQL
 
-## This branch contains basic learning and hello world projects for the go programming languages.
+This is a simple product CRUD API built with Go and PostgreSQL. The API allows users to perform basic operations such as Create, Read, Update, and Delete on a PostgreSQL database.
 
- - The entry point for the project is `main.go` file.
- - Every go file should have a package declaration at the top, like `package main`
- - There are builtin packages like `fmt`, `math`, `time`, etc. that can be imported using the `import` statement. It's kind of like `#include` in C/C++.
- - To run a go program, we can use the `go run` command followed by the file name. For example, `go run main.go`. It's similar to `python main.py` in Python or `npm start` in Node.js.
+## Setup
+1. Clone the repository:
+```bash
+    git clone https://github.com/danialcodes/go_learnings.git
+    cd go_learnings
+    git checkout crud_api_server
+```
+2. Install dependencies:
+```bash
+    go mod tidy
+```
+3. Environment Variables:
+- Create a `.env` file in the root directory and copy the contents of `.env.example` into it. Update the values as needed.
+```bash
+    cp .env.example .env
+```
+4. Seeding the database:
+- Run the following command to seed the database with sample data:
+```bash
+    go run scripts/seed.go
+```
+5. Run the server:
+```bash
+    go run .
+```
 
-# Functions
 
-## There are different types of functions in Go:
-- Standard or Named Function:
-    - A function with a name that can be called from anywhere in the program.
-    - Example:
-      ```go
-      func add(a int, b int) int {
-            return a + b
-      }
-      ```
-- Init Function:
-    - A special function that is called automatically when the package is initialized.
-    - It is used to initialize variables or perform setup tasks.
-    - Takes no parameters and returns no values.
-    - It is executed before the main function and is not called explicitly.
-    - Example:
-      ```go
-      func init() {
-            fmt.Println("This is the init function")
-      }
-      ```
-- Anonymous Function:
-    - A function without a name that can be defined and called inline.
-    - It can be assigned to a variable or passed as an argument to another function.
-    - Example:
-      ```go
-      func() {
-            fmt.Println("This is an anonymous function")
-      }()
-      ```
-- First-Order Function:
-    - Normal functions that can be assigned to variables, passed as arguments, or returned from other functions.
-    - Example:
-      ```go
-      func add(a int, b int) int {
-            return a + b
-      }
-      func main() {
-            result := add(2, 3)
-            fmt.Println(result) // Output: 5
-      }
-      ```
-- Higher-Order Function:
-    - A function that takes another function as an argument or returns a function as a result.
-    - Example:
-      ```go
-      func applyFunction(f func(int, int) int, a int, b int) int {
-            return f(a, b)
-      }
-      ```
+## API Endpoints
 
-- Closure
-    - A function that captures the lexical scope in which it was defined, allowing it to access variables from that scope even after the scope has exited.
-    - Example:
-      ```go
-      func makeCounter() func() int {
-            count := 0
-            return func() int {
-                  count++
-                  return count
-            }
-      }
-      func main() {
-            counter := makeCounter()
-            fmt.Println(counter()) // Output: 1
-            fmt.Println(counter()) // Output: 2
-      }
-      ```
-- Receiver Function:
-    - A function that is associated with a specific type (struct) and can be called on instances of that type.
-    - It allows you to define methods for your custom types.
-    - Example:
-      ```go
-      type Circle struct {
-            radius float64
-      }
-      func (c Circle) Area() float64 {
-            return math.Pi * c.radius * c.radius
-      }
-      func main() {
-            circle := Circle{radius: 5}
-            fmt.Println(circle.Area()) // Output: 78.53981633974483
-      }
-      ```
-- Variadic Function:
-    - A function that can accept a variable number of arguments of a specific type.
-    - It is defined using the `...` syntax before the parameter type.
-    - Example:
-      ```go
-      func sum(numbers ...int) int {
-            total := 0
-            for _, num := range numbers {
-                  total += num
-            }
-            return total
-      }
-      func main() {
-            fmt.Println(sum(1, 2, 3, 4, 5)) // Output: 15
-      }
-      ```
-# Slice
-### A slice is a dynamically-sized, flexible view into the elements of an array. It is a reference type that provides a way to work with a portion of an array without copying the entire array.
-### Slices are more powerful than arrays in Go because they can grow and shrink in size, and they provide built-in functions for manipulation. They are often used to represent collections of data.
-- Slices are created using the `make` function or by slicing an existing array or slice. They can be passed to functions, returned from functions, and used in various operations.
-- Slices are defined by a pointer to the underlying array, a length, and a capacity. The length is the number of elements in the slice, while the capacity is the maximum number of elements that can be stored in the underlying array without reallocating memory.
- ### Example:
-```go
-package main
-import "fmt"
-func main() {
-    // Creating a slice using the make function
-    slice1 := make([]int, 5) // Length: 5, Capacity: 5
-    fmt.Println(slice1)       // Output: [0 0 0 0 0]
+### Products
 
-    // Creating a slice from an array
-    arr := [5]int{1, 2, 3, 4, 5}
-    slice2 := arr[1:4] // Slicing from index 1 to index 4 (exclusive)
-    fmt.Println(slice2) // Output: [2 3 4]
+| Method | URL                    | Description                |
+|--------|------------------------|----------------------------|
+| GET    | `/api/v1/products`        | List all products          |
+| GET    | `/api/v1/products/:id`    | Get a specific product     |
+| POST   | `/api/v1/products`        | Create a new product       |
+| PUT    | `/api/v1/products/:id`    | Update an existing product |
+| DELETE | `/api/v1/products/:id`    | Delete a product           |
 
-    // Appending elements to a slice
-    slice3 := []int{1, 2, 3}
-    slice3 = append(slice3, 4, 5)
-    fmt.Println(slice3) // Output: [1 2 3 4 5]
+## Data Model
 
-    // Slicing a slice
-    slice4 := slice3[1:4] // Slicing from index 1 to index 4 (exclusive)
-    fmt.Println(slice4)   // Output: [2 3 4]
+### Product
+
+```json
+{
+  "id": 1,
+  "name": "Example Product",
+  "price": 99.99,
+  "quantity": 100,
+  "created_at": "2025-04-20T10:30:00Z",
+  "updated_at": "2025-04-20T10:30:00Z"
 }
+```
+
+## API Usage Examples
+
+### List Products
+
+```bash
+curl -X GET "http://localhost:8080/api/products?page=1&limit=10"
+```
+
+Response:
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Laptop",
+      "price": 1299.99,
+      "quantity": 10,
+      "created_at": "2025-04-20T10:30:00Z",
+      "updated_at": "2025-04-20T10:30:00Z"
+    },
+    {
+      "id": 2,
+      "name": "Smartphone",
+      "price": 699.99,
+      "quantity": 20,
+      "created_at": "2025-04-20T10:30:00Z",
+      "updated_at": "2025-04-20T10:30:00Z"
+    }
+  ],
+  "total": 5,
+  "page": 1,
+  "limit": 10,
+  "totalPages": 1
+}
+```
+
+### Get a Specific Product
+
+```bash
+curl -X GET "http://localhost:8080/api/products/1"
+```
+
+Response:
+```json
+{
+    "data": {
+      "id": 1,
+      "name": "Laptop",
+      "price": 1299.99,
+      "quantity": 10,
+      "created_at": "2025-04-20T10:30:00Z",
+      "updated_at": "2025-04-20T10:30:00Z"
+    },
+    "message": "Product retrieved successfully"
+}
+```
+
+### Create a Product
+
+```bash
+curl -X POST "http://localhost:8080/api/products" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "New Product",
+    "price": 49.99,
+    "quantity": 25
+  }'
+```
+
+Response:
+```json
+
+{       
+    "data": {
+            "id": 6,
+            "name": "New Product",
+            "price": 49.99,
+            "quantity": 25,
+            "created_at": "2025-04-21T15:30:00Z",
+            "updated_at": "2025-04-21T15:30:00Z"
+            },
+	"message": "Product created successfully"}
+```
+
+### Update a Product
+
+```bash
+curl -X PUT "http://localhost:8080/api/products/1" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Updated Laptop",
+    "price": 1399.99,
+    "quantity": 15
+  }'
+```
+
+Response:
+```json
+{
+    "data": {
+        "id": 1,
+        "name": "Updated Laptop",
+        "price": 1399.99,
+        "quantity": 15,
+        "created_at": "2025-04-20T10:30:00Z",
+        "updated_at": "2025-04-21T15:30:00Z"
+        },
+    "message": "Product updated successfully"
+}
+```
+
+### Delete a Product
+
+```bash
+curl -X DELETE "http://localhost:8080/api/products/1"
+```
+
+Response:
+```json
+{
+  "message": "Product deleted successfully"
+}
+```
+
+
+### Using Docker
+
+```bash
+# Build docker image
+docker-compose up -d
+```
+
+## Development
+
+### Project Structure
+
+```
+├── main.go                 # Application entry point
+├── .env.example            # Environment variables template
+├── go.mod                  # Go module definition
+├── go.sum                  # Go module checksums
+├── cmd/                    # Application commands
+│   └── api/                # API command
+│       └── api.go         # API entrypoint
+├── internal/               # Private application code
+│   ├── config/             # Configuration
+│   ├── api/                # API-related code
+│   │   ├── routes.go       # Route definitions
+│   │   ├── handlers/       # Request handlers
+│   │   └── middleware/     # Middleware
+│   ├── db/                 # Database setup
+│   ├── models/             # Data models
+│   └── repository/         # Data access
+└── scripts/                # Utility scripts
+    └── seed.go             # Database seeder
 ```

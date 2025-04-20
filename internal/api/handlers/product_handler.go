@@ -66,7 +66,10 @@ func (h *ProductHandler) GetProduct(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, product)
+	c.JSON(http.StatusOK, gin.H{
+		"data": product, 
+		"message": "Product retrieved successfully",
+	})
 }
 
 // CreateProduct handles POST /api/products
@@ -99,7 +102,10 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, product)
+	c.JSON(http.StatusCreated,gin.H{
+		"data": product,
+		"message": "Product created successfully",
+	})
 }
 
 // UpdateProduct handles PUT /api/products/:id
@@ -158,7 +164,10 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, product)
+	c.JSON(http.StatusOK, gin.H{
+		"data": product,
+		"message": "Product updated successfully",
+	})
 }
 
 // DeleteProduct handles DELETE /api/products/:id
